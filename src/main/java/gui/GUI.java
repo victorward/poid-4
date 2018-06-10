@@ -3,6 +3,7 @@ package gui;
 import operations.WindowType;
 import operations.equalizer.Equalizer;
 import operations.filter.*;
+import org.apache.commons.io.FilenameUtils;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import utils.SamplesToWave;
@@ -27,6 +28,7 @@ public class GUI extends javax.swing.JFrame {
     private Integer[] samples;
     private AudioFormat af;
     private SOIWahWah filterWahWah = new SOIWahWah();
+    private String filename;
     public static final String defaultImagesPath = "src/main/resources/sounds";
 
     /**
@@ -438,11 +440,10 @@ public class GUI extends javax.swing.JFrame {
             this.samples = WaveToSamplesConverter.convertWaveToIntSamples(this.f);
             this.af = WaveToSamplesConverter.getAudioFormat(this.f);
             updateChartStartSignal();
-            if(this.wahWahJRadioButton.isSelected()){
+            if (this.wahWahJRadioButton.isSelected()) {
                 setAndComputeForWahWah();
                 updateChartOutputSignalForWahWah();
-            }
-            else{
+            } else {
                 setAndCompute();
                 updateChartOutputSignal();
             }
@@ -453,7 +454,7 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_fileOpenJButtonActionPerformed
 
-    private void setAndComputeForWahWah(){
+    private void setAndComputeForWahWah() {
         this.filterWahWah.setAmplify(Integer.parseInt(this.amplifyJTextField.getText()));
         this.filterWahWah.setFrequency(Integer.parseInt(this.frequencyJTextField.getText()));
         this.filterWahWah.setLeftSideFreq(Integer.parseInt(this.LeftSideFreqJTextField.getText()));
@@ -468,9 +469,7 @@ public class GUI extends javax.swing.JFrame {
     }
 
 
-
-
-    private void setAndCompute(){
+    private void setAndCompute() {
 
         setSlidersEqualizer();
 
@@ -489,26 +488,25 @@ public class GUI extends javax.swing.JFrame {
     }
 
 
-    private void updateChartOutputSignal(){
+    private void updateChartOutputSignal() {
         JFreeChart chart = ChartDrawer.drawChart(this.filter.getOutputSignal(), "output signal");
 
         ChartPanel cp = new ChartPanel(chart);
         this.signalOutputChartJPanel.removeAll();
         this.signalOutputChartJPanel.setLayout(new java.awt.BorderLayout());
-        this.signalOutputChartJPanel.add(cp,BorderLayout.CENTER);
+        this.signalOutputChartJPanel.add(cp, BorderLayout.CENTER);
         this.signalOutputChartJPanel.validate();
     }
 
 
-    private void updateChartOutputSignalForWahWah(){
+    private void updateChartOutputSignalForWahWah() {
         JFreeChart chart = ChartDrawer.drawChart(this.filterWahWah.getOutputSignal(), "WahWah");
         ChartPanel cp = new ChartPanel(chart);
         this.signalOutputChartJPanel.removeAll();
         this.signalOutputChartJPanel.setLayout(new java.awt.BorderLayout());
-        this.signalOutputChartJPanel.add(cp,BorderLayout.CENTER);
+        this.signalOutputChartJPanel.add(cp, BorderLayout.CENTER);
         this.signalOutputChartJPanel.validate();
     }
-
 
 
     private void filterSpectrumJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterSpectrumJRadioButtonActionPerformed
@@ -565,11 +563,10 @@ public class GUI extends javax.swing.JFrame {
 
     private void updateChangesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateChangesJButtonActionPerformed
         // TODO update Changes
-        if(this.wahWahJRadioButton.isSelected()){
+        if (this.wahWahJRadioButton.isSelected()) {
             setAndComputeForWahWah();
             updateChartOutputSignalForWahWah();
-        }
-        else{
+        } else {
             setAndCompute();
             updateChartOutputSignal();
         }
@@ -577,21 +574,19 @@ public class GUI extends javax.swing.JFrame {
 
     private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
         // TODO save sound to file
-        JFileChooser fc = new JFileChooser();
-        fc.showSaveDialog(this);
-        String path = fc.getSelectedFile().getAbsolutePath();
-        path+=".wav";
+//        JFileChooser fc = new JFileChooser();
+//        fc.setCurrentDirectory(new File("src/main/resources/results"));
+//        fc.showSaveDialog(this);
+//        String path = fc.getSelectedFile().getAbsolutePath();
+        String path = "src/main/resources/results/transformed_" + this.filename + ".wav";
         SamplesToWave saver;
 
-        if(this.wahWahJRadioButton.isSelected())
-        {
+        if (this.wahWahJRadioButton.isSelected()) {
             saver = new SamplesToWave(44100, this.filterWahWah.getOutputSignal(), this.af);
 
-        }
-        else{
+        } else {
             saver = new SamplesToWave(SOIFilter.SAMPLING_FREQUENCY, this.filter.getOutputSignal(), this.af);
         }
-
 
         try {
             saver.saveWave(path);
@@ -613,7 +608,7 @@ public class GUI extends javax.swing.JFrame {
         this.filterConvolutionJRadioButton.setSelected(false);
     }//GEN-LAST:event_wahWahJRadioButtonActionPerformed
 
-    private void setSlidersEqualizer(){
+    private void setSlidersEqualizer() {
         System.out.println(this.jSlider0.getValue());
         System.out.println(this.jSlider1.getValue());
         System.out.println(this.jSlider2.getValue());
@@ -626,17 +621,17 @@ public class GUI extends javax.swing.JFrame {
         this.eq.getSliders().get(4).setEdge(this.jSlider4.getValue());
     }
 
-    private void updateChartStartSignal(){
+    private void updateChartStartSignal() {
 
         JFreeChart chart = ChartDrawer.drawChart(this.samples, "start signal");
         ChartPanel cp = new ChartPanel(chart);
         this.signalStartChartJPanel.removeAll();
         this.signalStartChartJPanel.setLayout(new java.awt.BorderLayout());
-        this.signalStartChartJPanel.add(cp,BorderLayout.CENTER);
+        this.signalStartChartJPanel.add(cp, BorderLayout.CENTER);
         this.signalStartChartJPanel.validate();
     }
 
-    private String readSoundFile(){
+    private String readSoundFile() {
         final JFileChooser fc = new JFileChooser();
         fc.setCurrentDirectory(new File(defaultImagesPath));
         fc.setAcceptAllFileFilterUsed(false);
@@ -645,11 +640,13 @@ public class GUI extends javax.swing.JFrame {
         int returnValue = fc.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             String path = fc.getSelectedFile().getAbsolutePath();
-            System.out.println("path: "+path);
+            this.filename = FilenameUtils.getBaseName(path);
+            System.out.println("path: " + path);
             return path;
         }
         return null;
     }
+
     /**
      * @param args the command line arguments
      */
