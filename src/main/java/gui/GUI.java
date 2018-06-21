@@ -248,23 +248,23 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setText("Amplify:");
+        jLabel6.setText("");
 
         amplifyJTextField.setText("2");
 
-        jLabel7.setText("Frequency:");
+        jLabel7.setText("");
 
         frequencyJTextField.setText("5");
 
-        jLabel8.setText("Left side freq:");
+        jLabel8.setText("");
 
         LeftSideFreqJTextField.setText("200");
 
         RighttSideFreqJTextField.setText("800");
 
-        jLabel9.setText("Right side freq:");
+        jLabel9.setText("");
 
-        jLabel10.setText("Width:");
+        jLabel10.setText("");
 
         widhtJTextField.setText("20");
 
@@ -328,11 +328,11 @@ public class GUI extends javax.swing.JFrame {
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(jLabel6)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(amplifyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(amplifyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(18, 18, 18)
                                                                 .addComponent(jLabel7)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(frequencyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                                .addComponent(frequencyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(15, 15, 15)
                                                 .addComponent(filterSpectrumJRadioButton)
@@ -341,7 +341,8 @@ public class GUI extends javax.swing.JFrame {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(filterEqualizerJRadioButton)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(wahWahJRadioButton))
+//                                                .addComponent(wahWahJRadioButton)
+                                        )
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(31, 31, 31)
                                                 .addComponent(jLabel8)
@@ -350,13 +351,13 @@ public class GUI extends javax.swing.JFrame {
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(jLabel10)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(widhtJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(widhtJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(LeftSideFreqJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(LeftSideFreqJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                                 .addComponent(jLabel9)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(RighttSideFreqJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                                .addComponent(RighttSideFreqJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(signalStartChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -375,7 +376,8 @@ public class GUI extends javax.swing.JFrame {
                                                         .addComponent(filterSpectrumJRadioButton)
                                                         .addComponent(filterConvolutionJRadioButton)
                                                         .addComponent(filterEqualizerJRadioButton)
-                                                        .addComponent(wahWahJRadioButton))
+//                                                        .addComponent(wahWahJRadioButton)
+                                                )
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                         .addComponent(NjTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

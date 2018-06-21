@@ -17,53 +17,53 @@ public class SOIWahWah extends SOIFilter {
 
     @Override
     public void computeFilter() {
-        outputSignal = new Double[(int) N];
-        outputSignal = new Double[samplesCount];
-        for (int i = 0; i < outputSignal.length; i++) {
-            outputSignal[i] = 0.0;
-        }
-        Complex[] signalTab;
-        Complex[] impulseResponseComplex = new Complex[impulseResponse.size()];
-        Complex[] resultOfMultiplication;
-        resultsOfFilterOperations.clear();
-
-        for (int windowIndex = 0; windowIndex < signalWindows.size(); windowIndex++) {
-            signalTab = new Complex[signalWindows.get(windowIndex).getSamples().size()];
-            for (int sampleIndex = 0; sampleIndex < signalTab.length; sampleIndex++) {
-                signalTab[sampleIndex] = new Complex(signalWindows.get(windowIndex).getSamples().get(sampleIndex), 0.0);
-            }
-            signalTab = Fourier.computeFastFourier(signalTab, bits);
-            int t = (int) (windowIndex * M);
-            double fc = oscilationFunction[t];
-
-            double leftSide = (fc - width / 2.0) / (SAMPLING_FREQUENCY / N);
-            double rightSide = (fc + width / 2.0) / (SAMPLING_FREQUENCY / N);
-            for (int i = 0; i < signalTab.length / 2; i++) {
-                if (i > leftSide && i < rightSide) {
-                    signalTab[i] = signalTab[i].multiply(amplify);
-                    signalTab[signalTab.length - i - 1] = signalTab[i].multiply(amplify);
-                } else {
-                    signalTab[i] = signalTab[i].multiply(1.0);
-                    signalTab[signalTab.length - i - 1] = signalTab[i].multiply(1.0);
-                }
-            }
-
-            resultOfMultiplication = new Complex[signalTab.length];
-            for (int i = 0; i < resultOfMultiplication.length; i++) {
-                resultOfMultiplication[i] = signalTab[i];
-            }
-
-            resultOfMultiplication = Fourier.computeInverseFastFourier(resultOfMultiplication, bits);
-            Double[] d = new Double[resultOfMultiplication.length];
-            for (int i = 0; i < d.length; i++) {
-                d[i] = resultOfMultiplication[i].getReal();
-            }
-            resultsOfFilterOperations.add(d);
-        }
-        for (int i = 0; i < resultsOfFilterOperations.size(); i++) {
-            System.out.println((i + 1) + " Elem = " + (i * R));
-            addElems((int) (i * R), resultsOfFilterOperations.get(i), outputSignal);
-        }
+//        outputSignal = new Double[(int) N];
+//        outputSignal = new Double[samplesCount];
+//        for (int i = 0; i < outputSignal.length; i++) {
+//            outputSignal[i] = 0.0;
+//        }
+//        Complex[] signalTab;
+//        Complex[] impulseResponseComplex = new Complex[impulseResponse.size()];
+//        Complex[] resultOfMultiplication;
+//        resultsOfFilterOperations.clear();
+//
+//        for (int windowIndex = 0; windowIndex < signalWindows.size(); windowIndex++) {
+//            signalTab = new Complex[signalWindows.get(windowIndex).getSamples().size()];
+//            for (int sampleIndex = 0; sampleIndex < signalTab.length; sampleIndex++) {
+//                signalTab[sampleIndex] = new Complex(signalWindows.get(windowIndex).getSamples().get(sampleIndex), 0.0);
+//            }
+//            signalTab = Fourier.computeFastFourier(signalTab, bits);
+//            int t = (int) (windowIndex * M);
+//            double fc = oscilationFunction[t];
+//
+//            double leftSide = (fc - width / 2.0) / (SAMPLING_FREQUENCY / N);
+//            double rightSide = (fc + width / 2.0) / (SAMPLING_FREQUENCY / N);
+//            for (int i = 0; i < signalTab.length / 2; i++) {
+//                if (i > leftSide && i < rightSide) {
+//                    signalTab[i] = signalTab[i].multiply(amplify);
+//                    signalTab[signalTab.length - i - 1] = signalTab[i].multiply(amplify);
+//                } else {
+//                    signalTab[i] = signalTab[i].multiply(1.0);
+//                    signalTab[signalTab.length - i - 1] = signalTab[i].multiply(1.0);
+//                }
+//            }
+//
+//            resultOfMultiplication = new Complex[signalTab.length];
+//            for (int i = 0; i < resultOfMultiplication.length; i++) {
+//                resultOfMultiplication[i] = signalTab[i];
+//            }
+//
+//            resultOfMultiplication = Fourier.computeInverseFastFourier(resultOfMultiplication, bits);
+//            Double[] d = new Double[resultOfMultiplication.length];
+//            for (int i = 0; i < d.length; i++) {
+//                d[i] = resultOfMultiplication[i].getReal();
+//            }
+//            resultsOfFilterOperations.add(d);
+//        }
+//        for (int i = 0; i < resultsOfFilterOperations.size(); i++) {
+//            System.out.println((i + 1) + " Elem = " + (i * R));
+//            addElems((int) (i * R), resultsOfFilterOperations.get(i), outputSignal);
+//        }
     }
 
     @Override
