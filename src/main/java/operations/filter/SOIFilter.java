@@ -9,10 +9,10 @@ import java.util.List;
 
 abstract public class SOIFilter {
 
-    protected double M = 0; //Długość okna
-    protected double R = 0; //Przesunięcie
-    protected double fc = 0; //Częstotliwość odcięcia
-    protected double L = 0; //Długoćś odpowiedzi impulsowej
+    protected double M = 0; // Długość okna
+    protected double R = 0; // Przesunięcie
+    protected double fc = 0; // Częstotliwość odcięcia
+    protected double L = 0; // Długoćś odpowiedzi impulsowej
     protected double N = 0;
     protected int bits = 0;
     public static final double SAMPLING_FREQUENCY = 44100;
@@ -78,9 +78,9 @@ abstract public class SOIFilter {
         signalWindows.clear();
         this.samplesCount = samples.length;
         SoundSignal ss;
-        System.out.println(samples.length);
+        System.out.println("samples.length " + samples.length);
         for (int windowIndex = 0; windowIndex < samples.length / M; windowIndex++) {
-            System.out.println(windowIndex * M + ", " + (windowIndex * M) + M + " " + M);
+            System.out.println("windowIndex * M = " + windowIndex * M + "; (windowIndex * M) + M = " + (windowIndex * M) + M + "; M = " + M);
             ss = new SoundSignal((int) (windowIndex * M), (int) M, samples);
             for (int i = 0; i < N - M; i++) {
                 ss.getSamples().add(0.0);

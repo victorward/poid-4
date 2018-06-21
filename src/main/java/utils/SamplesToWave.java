@@ -37,26 +37,8 @@ public class SamplesToWave {
     }
 
     public void saveWave(String path) throws FileNotFoundException, IOException {
-
         System.out.println("Samples ALL " + samples.size());
         byte[] bytesToSave = new byte[samples.size() * 2];
-
-        int count = 0;
-//        for (int i = 0; i < samples.size(); i++) {
-//
-////            BigDecimal bi = new BigDecimal(samples.get(i));
-//            BigInteger bi = new BigInteger(samples.get(i).toString());
-//            byte[] b = bi.toByteArray();
-////            System.out.println("Byte size "+b.length);
-//            if (b.length == 1) {
-//                bytesToSave[count+1] = 0;
-//                bytesToSave[count] = b[0];
-//            } else {
-//                bytesToSave[count+1] = b[0];
-//                bytesToSave[count] = b[1];
-//            }
-//            count += 2;
-//        }
         for (int i = 0; i < samples.size(); i++) {
             int temp = (short) samples.get(i).intValue();
             bytesToSave[2 * i] = (byte) temp;

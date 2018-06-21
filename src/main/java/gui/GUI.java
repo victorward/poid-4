@@ -573,7 +573,6 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_updateChangesJButtonActionPerformed
 
     private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
-        // TODO save sound to file
 //        JFileChooser fc = new JFileChooser();
 //        fc.setCurrentDirectory(new File("src/main/resources/results"));
 //        fc.showSaveDialog(this);

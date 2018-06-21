@@ -35,8 +35,8 @@ public class SOIFilterConvolution extends SOIFilter {
             double window = windowType.getValue(k, M);
             tab[k] = tab[k] * window;
         }
-        for (int i = 0; i < tab.length; i++){
-            impulseResponse.add(tab[i]);
+        for (double aTab : tab) {
+            impulseResponse.add(aTab);
         }
     }
 
@@ -49,8 +49,8 @@ public class SOIFilterConvolution extends SOIFilter {
 
         resultsOfFilterOperations.clear();
         List<Double> convolutedElements;
-        for (int windowIndex = 0; windowIndex < signalWindows.size(); windowIndex++) {
-            convolutedElements = Convolution.computeConvolutedSignal(impulseResponse, signalWindows.get(windowIndex).getSamples());
+        for (SoundSignal signalWindow : signalWindows) {
+            convolutedElements = Convolution.computeConvolutedSignal(impulseResponse, signalWindow.getSamples());
             resultsOfFilterOperations.add(convolutedElements.toArray(new Double[convolutedElements.size()]));
         }
         int sizeOfNewWindow = resultsOfFilterOperations.get(0).length;

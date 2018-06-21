@@ -47,12 +47,12 @@ public class SOIFilterSpectrum extends SOIFilter {
             }
         }
 
-        System.out.println("Windows " + resultsOfFilterOperations.size());
-        System.out.println("OutputSize " + outputSignal.length);
-        System.out.println("Size of one window" + resultsOfFilterOperations.get(0).length);
-        System.out.println("HOP Size " + R);
+        System.out.println("Windows = " + resultsOfFilterOperations.size());
+        System.out.println("OutputSize = " + outputSignal.length);
+        System.out.println("Size of one window = " + resultsOfFilterOperations.get(0).length);
+        System.out.println("HOP Size = " + R);
         for (int i = 0; i < resultsOfFilterOperations.size(); i++) {
-            System.out.println((i + 1) + " Elem " + (i * R));
+            System.out.println((i + 1) + " Elem = " + (i * R));
             addElems((int) (i * R), resultsOfFilterOperations.get(i), outputSignal);
         }
     }

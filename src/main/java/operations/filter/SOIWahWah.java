@@ -15,46 +15,6 @@ public class SOIWahWah extends SOIFilter {
     private double samplesInOnePeriod = SAMPLING_FREQUENCY / frequency;
     private double timeBetweenOneSamples = 1.0 / SAMPLING_FREQUENCY;
 
-    public double getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(double frequency) {
-        this.frequency = frequency;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    public double getAmplify() {
-        return amplify;
-    }
-
-    public void setAmplify(double amplify) {
-        this.amplify = amplify;
-    }
-
-    public double getLeftSideFreq() {
-        return leftSideFreq;
-    }
-
-    public void setLeftSideFreq(double leftSideFreq) {
-        this.leftSideFreq = leftSideFreq;
-    }
-
-    public double getRightSideFreq() {
-        return rightSideFreq;
-    }
-
-    public void setRightSideFreq(double rightSideFreq) {
-        this.rightSideFreq = rightSideFreq;
-    }
-
     @Override
     public void computeFilter() {
         outputSignal = new Double[(int) N];
@@ -101,7 +61,7 @@ public class SOIWahWah extends SOIFilter {
             resultsOfFilterOperations.add(d);
         }
         for (int i = 0; i < resultsOfFilterOperations.size(); i++) {
-            System.out.println((i + 1) + " Elem " + (i * R));
+            System.out.println((i + 1) + " Elem = " + (i * R));
             addElems((int) (i * R), resultsOfFilterOperations.get(i), outputSignal);
         }
     }
@@ -116,6 +76,46 @@ public class SOIWahWah extends SOIFilter {
                     + ((rightSideFreq - leftSideFreq))
                     * Math.signum(Math.sin(2.0 * Math.PI * i * frequency / SAMPLING_FREQUENCY));
         }
+    }
+
+    public double getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(double frequency) {
+        this.frequency = frequency;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getAmplify() {
+        return amplify;
+    }
+
+    public void setAmplify(double amplify) {
+        this.amplify = amplify;
+    }
+
+    public double getLeftSideFreq() {
+        return leftSideFreq;
+    }
+
+    public void setLeftSideFreq(double leftSideFreq) {
+        this.leftSideFreq = leftSideFreq;
+    }
+
+    public double getRightSideFreq() {
+        return rightSideFreq;
+    }
+
+    public void setRightSideFreq(double rightSideFreq) {
+        this.rightSideFreq = rightSideFreq;
     }
 
     @Override
