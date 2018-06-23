@@ -2,7 +2,6 @@ package operations.filter;
 
 import operations.WindowType;
 import operations.soi.SoundSignal;
-import org.apache.commons.math3.complex.Complex;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,13 +18,12 @@ abstract public class SOIFilter {
     double N = 0;
     int bits = 0;
     public static final double SAMPLING_FREQUENCY = 44100;
-    List<SoundSignal> signalWindows = new ArrayList<>();
     List<Double> impulseResponse = new ArrayList<>();
     WindowType windowType = WindowType.SQUARE;
-    protected List<Complex[]> soundSprectres = new ArrayList<>();
     Double[] outputSignal;
-//    Integer[] signal;
     double[] signal;
+
+    List<SoundSignal> signalWindows = new ArrayList<>();
     List<Double[]> resultsOfFilterOperations = new ArrayList<>();
 
     int samplesCount;
@@ -72,16 +70,11 @@ abstract public class SOIFilter {
         this.L = L;
     }
 
-    public List<SoundSignal> getSignalWindows() {
-        return signalWindows;
-    }
-
     public Double[] getOutputSignal() {
         return outputSignal;
     }
 
     public void setSignalWindows(double[] samples) {
-        signalWindows.clear();
         this.samplesCount = samples.length;
         this.signal = samples;
         windows = new ArrayList<>();

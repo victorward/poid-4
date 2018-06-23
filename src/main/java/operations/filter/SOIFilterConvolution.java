@@ -24,11 +24,8 @@ public class SOIFilterConvolution extends SOIFilter {
     public void computeFilter() {
         double[] expandedSignal = expand();
         outputSignal = new Double[samplesCount];
-        resultsOfFilterOperations.clear();
         List<Double> convolutedElements = convolve(expandedSignal, impulseResponse);
-        resultsOfFilterOperations.add(convolutedElements.toArray(new Double[convolutedElements.size()]));
-
-        outputSignal = resultsOfFilterOperations.get(0);
+        outputSignal = convolutedElements.toArray(new Double[convolutedElements.size()]);
     }
 
     private List<Double> convolve(double[] expandedSignal, List<Double> filter) {

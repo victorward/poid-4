@@ -6,12 +6,12 @@ import java.util.List;
 public class SoundSignal {
     private List<Double> samples;
 
-    public SoundSignal(int startingIndex, int windowSize, Integer[] samples) {
+    public SoundSignal(int startingIndex, int windowSize, double[] samples) {
         this.samples = new ArrayList<>();
 
         for (int i = startingIndex; i < startingIndex + windowSize; i++) {
             if (i < samples.length) {
-                this.samples.add(samples[i].doubleValue());
+                this.samples.add(samples[i]);
             } else {
                 this.samples.add(0.0);
             }

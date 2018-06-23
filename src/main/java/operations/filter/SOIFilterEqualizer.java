@@ -3,11 +3,13 @@ package operations.filter;
 import operations.WindowType;
 import operations.equalizer.Equalizer;
 import operations.soi.SoundSignal;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.complex.Complex;
 import utils.Fourier;
 import utils.chart.ChartDrawer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SOIFilterEqualizer extends SOIFilter {
@@ -22,6 +24,23 @@ public class SOIFilterEqualizer extends SOIFilter {
     public Equalizer getEqualizer() {
         return equalizer;
     }
+
+    @Override
+    public void setSignalWindows(double[] samples) {
+        signalWindows.clear();
+        this.samplesCount = samples.length;
+        SoundSignal ss;
+        for (int windowIndex = 0; windowIndex < samples.length / M; windowIndex++) {
+            ss = new SoundSignal((int) (windowIndex * M), (int) M, samples);
+            for (int i = 0; i < N - M; i++) {
+                ss.getSamples().add(0.0);
+            }
+            signalWindows.add(ss);
+        }
+        this.signal = samples;
+        windows = new ArrayList<>();
+    }
+
 
     @Override
     public void computeFilter() {
@@ -49,7 +68,6 @@ public class SOIFilterEqualizer extends SOIFilter {
             } else {
                 edge = 1.0 / Math.abs(equalizer.getSliders().get(equalizerSlide).getEdge());
             }
-//                    System.out.println(leftSide + " " + rightSide + " " + edge);
             for (int spectrumIndex = leftSide; spectrumIndex < rightSide; spectrumIndex++) {
                 eqResp[spectrumIndex] = new Double(edge);
                 eqResp[eqResp.length - spectrumIndex - 1] = new Double(edge);
@@ -90,6 +108,7 @@ public class SOIFilterEqualizer extends SOIFilter {
             System.out.println((i + 1) + " Elem " + (i * R));
             addElems((int) (i * R), resultsOfFilterOperations.get(i), outputSignal);
         }
+        outputSignal = SOIFilterSpectrum.normalize(ArrayUtils.toPrimitive(outputSignal));
     }
 
     @Override
