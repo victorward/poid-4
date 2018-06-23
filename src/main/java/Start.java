@@ -5,7 +5,6 @@ public class Start {
         try {
             System.out.println("Application has started");
             UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel");
-//            new Main();
         } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
             e.printStackTrace();
         }

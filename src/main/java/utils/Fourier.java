@@ -2,6 +2,8 @@ package utils;
 
 import org.apache.commons.math3.complex.Complex;
 
+import java.util.Arrays;
+
 public class Fourier {
     public static Complex[] computeFastFourier(Complex[] sound, int bits) {
         double N = sound.length;
@@ -68,6 +70,7 @@ public class Fourier {
             localTR[Integer.parseInt(bitIndex, 2)] = signalTab[i];
         }
         for (int i = 0; i < localTR.length; i++) {
+            System.out.println("localTR" + Arrays.toString(localTR));
             transformedSignal[i] = new Complex(localTR[i].getReal(), localTR[i].getImaginary());
         }
 

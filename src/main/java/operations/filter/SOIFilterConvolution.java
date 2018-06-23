@@ -1,40 +1,20 @@
 package operations.filter;
 
-import operations.soi.SoundSignal;
-import utils.Convolution;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class SOIFilterConvolution extends SOIFilter {
     @Override
-    public void setSignalWindows(Integer[] samples) {
-        signalWindows.clear();
+    public void setSignalWindows(double[] samples) {
         this.samplesCount = samples.length;
-        SoundSignal ss;
-        System.out.println(samples.length);
-        for (int windowIndex = 0; windowIndex < samples.length / M; windowIndex++) {
-//            System.out.println(windowIndex*R + ", " + ((windowIndex*R)+M) + " " + M);
-            ss = new SoundSignal((int) (windowIndex * R), (int) M, samples);
-//            System.out.println("SS size "+ss.getSamples().size());
-            signalWindows.add(ss);
-        }
+        this.signal = samples;
     }
 
     @Override
     public void computeLowPassFilterParameters() {
         impulseResponse.clear();
-//        System.out.println("Start");
-        double[] tab = new double[(int)L];
-        for (int k = 0; k < L; k++) {
-//            System.out.println(k + " ");
-            if (k == (L - 1) / 2) {
-                tab[k]=(2 * fc / SAMPLING_FREQUENCY);
-            } else {
-                tab[k] = computeStrangeSincFunction(k);
-            }
-            double window = windowType.getValue(k, M);
-            tab[k] = tab[k] * window;
-        }
+        double[] tab = new double[(int) L];
+        tab = baseFilter(tab);
         for (double aTab : tab) {
             impulseResponse.add(aTab);
         }
@@ -42,21 +22,45 @@ public class SOIFilterConvolution extends SOIFilter {
 
     @Override
     public void computeFilter() {
+        double[] expandedSignal = expand();
         outputSignal = new Double[samplesCount];
-        for (int i = 0; i < outputSignal.length; i++) {
-            outputSignal[i] = 0.0;
+        resultsOfFilterOperations.clear();
+        List<Double> convolutedElements = convolve(expandedSignal, impulseResponse);
+        resultsOfFilterOperations.add(convolutedElements.toArray(new Double[convolutedElements.size()]));
+
+        outputSignal = resultsOfFilterOperations.get(0);
+    }
+
+    private List<Double> convolve(double[] expandedSignal, List<Double> filter) {
+        List<Double> convolutedSignal = new ArrayList<>(samplesCount);
+//        double[] filteredSignal = new double[samplesCount];
+        for (int i = 0, j = (int) (L - 1); i < samplesCount; i++, j++) {
+            double value = 0.0;
+            for (int k = 0; k < L; k++) {
+                value += (expandedSignal[j - k] * filter.get(k));
+            }
+            convolutedSignal.add(value);
         }
 
-        resultsOfFilterOperations.clear();
-        List<Double> convolutedElements;
-        for (SoundSignal signalWindow : signalWindows) {
-            convolutedElements = Convolution.computeConvolutedSignal(impulseResponse, signalWindow.getSamples());
-            resultsOfFilterOperations.add(convolutedElements.toArray(new Double[convolutedElements.size()]));
-        }
-        int sizeOfNewWindow = resultsOfFilterOperations.get(0).length;
-        for (int i = 0; i < resultsOfFilterOperations.size(); i++) {
-            addElems((int) (i * R), resultsOfFilterOperations.get(i), outputSignal);
+        return convolutedSignal;
+    }
+
+    private double[] expand() {
+        double[] expandedSignal = new double[(int) (samplesCount + L - 1)];
+        prependValues(expandedSignal);
+        appendSignal(expandedSignal);
+        return expandedSignal;
+    }
+
+    private void prependValues(double[] expandedSignal) {
+        for (int i = 0, j = (int) (L - 1); i < L - 1; i++, j--) {
+            expandedSignal[i] = signal[j];
         }
     }
 
+    private void appendSignal(double[] expandedSignal) {
+        for (int i = (int) (L - 1), j = 0; i < expandedSignal.length; i++, j++) {
+            expandedSignal[i] = signal[j];
+        }
+    }
 }

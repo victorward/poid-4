@@ -22,7 +22,8 @@ public enum WindowType {
         }
 
         if (windowType.equals(WindowType.VON_HANN.toString())) {
-            return 0.5 - (0.5 * Math.cos((2 * Math.PI * n) / (windowSize - 1.0)));
+            return 0.5 * (1 - Math.cos((2 * Math.PI * n) / (windowSize - 1)));
+//            return 0.5 - (0.5 * Math.cos((2 * Math.PI * n) / (windowSize - 1.0)));
         }
 
         if (windowType.equals(WindowType.HAMMING.toString())) {

@@ -5,25 +5,31 @@ import operations.soi.SoundSignal;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static java.lang.Math.sin;
 
 abstract public class SOIFilter {
 
-    protected double M = 0; // Długość okna
-    protected double R = 0; // Przesunięcie
-    protected double fc = 0; // Częstotliwość odcięcia
-    protected double L = 0; // Długoćś odpowiedzi impulsowej
-    protected double N = 0;
-    protected int bits = 0;
+    double M = 0; // Długość okna
+    double R = 0; // Przesunięcie
+    private double fc = 0; // Częstotliwość odcięcia
+    double L = 0; // Długoćś odpowiedzi impulsowej
+    double N = 0;
+    int bits = 0;
     public static final double SAMPLING_FREQUENCY = 44100;
-    protected List<SoundSignal> signalWindows = new ArrayList<>();
-    protected List<Double> impulseResponse = new ArrayList<>();
-    protected WindowType windowType = WindowType.SQUARE;
+    List<SoundSignal> signalWindows = new ArrayList<>();
+    List<Double> impulseResponse = new ArrayList<>();
+    WindowType windowType = WindowType.SQUARE;
     protected List<Complex[]> soundSprectres = new ArrayList<>();
-    protected Double[] outputSignal;
-    protected List<Double[]> resultsOfFilterOperations = new ArrayList<>();
+    Double[] outputSignal;
+//    Integer[] signal;
+    double[] signal;
+    List<Double[]> resultsOfFilterOperations = new ArrayList<>();
 
-    protected int samplesCount;
+    int samplesCount;
+    ArrayList<double[]> windows;
 
     public double getN() {
         return N;
@@ -74,20 +80,11 @@ abstract public class SOIFilter {
         return outputSignal;
     }
 
-    public void setSignalWindows(Integer[] samples) {
+    public void setSignalWindows(double[] samples) {
         signalWindows.clear();
         this.samplesCount = samples.length;
-        SoundSignal ss;
-        System.out.println("samples.length " + samples.length);
-        for (int windowIndex = 0; windowIndex < samples.length / M; windowIndex++) {
-            System.out.println("windowIndex * M = " + windowIndex * M + "; (windowIndex * M) + M = " + (windowIndex * M) + M + "; M = " + M);
-            ss = new SoundSignal((int) (windowIndex * M), (int) M, samples);
-            for (int i = 0; i < N - M; i++) {
-                ss.getSamples().add(0.0);
-            }
-//            System.out.println("SS size "+ss.getSamples().size());
-            signalWindows.add(ss);
-        }
+        this.signal = samples;
+        windows = new ArrayList<>();
     }
 
     public WindowType getWindowType() {
@@ -100,52 +97,76 @@ abstract public class SOIFilter {
 
     public void computeLowPassFilterParameters() {
         impulseResponse.clear();
-//        System.out.println("Start");
         double[] tab = new double[(int) L];
+        tab = baseFilter(tab);
+        tab = fillWithZeros(tab);
+        for (double aTab : tab) {
+            impulseResponse.add(aTab);
+        }
+    }
+
+    double[] fillWithZeros(double[] array) {
+        int desiredSize = findDesiredSize();
+        return expandArray(array, desiredSize);
+    }
+
+    private double[] expandArray(double[] array, int desiredSize) {
+        double[] expandedArray = new double[desiredSize];
+        int i = 0;
+        for (; i < array.length; ++i) {
+            expandedArray[i] = array[i];
+        }
+        for (; i < desiredSize; ++i) {
+            expandedArray[i] = 0;
+        }
+        return expandedArray;
+    }
+
+    private int findDesiredSize() {
+        int desiredSize = 1;
+        while (desiredSize < M + L - 1) {
+            desiredSize *= 2;
+        }
+        return desiredSize;
+    }
+
+    double[] baseFilter(double[] tab) {
+//        double halfFilterLength = (L - 1) / 2;
+        int halfFilterLength = (int) (L / 2);
+        double frequenciesRatio = 2.0 * fc / SAMPLING_FREQUENCY;
+        double pi = Math.PI;
         for (int k = 0; k < L; k++) {
-//            System.out.println(k + " ");
-            if (k == (L - 1) / 2) {
-                tab[k] = (2 * fc / SAMPLING_FREQUENCY);
+            if (k == halfFilterLength) {
+                tab[k] = frequenciesRatio;
             } else {
-                tab[k] = computeStrangeSincFunction(k);
+                double difference = pi * (k - halfFilterLength);
+                tab[k] = sin(frequenciesRatio * difference) / difference;
             }
-            double window = windowType.getValue(k, M);
+            double window = windowType.getValue(k, L);
             tab[k] = tab[k] * window;
         }
-        for (int i = 0; i < tab.length; i++) {
-            impulseResponse.add(tab[i]);
+
+        return normalize(tab);
+    }
+
+    private double[] normalize(double[] filter) {
+        double[] normalizedFilter = new double[(int) L];
+        double sum = Arrays.stream(filter).sum();
+        double multiplier = 1.0 / sum;
+        for (int i = 0; i < L; i++) {
+            normalizedFilter[i] = filter[i] * multiplier;
         }
-        for (int i = 0; i < N - L; i++) {
-            impulseResponse.add(0.0);
-        }
+        return normalizedFilter;
     }
 
     abstract public void computeFilter();
 
-    protected static void addElems(int startingIndex, Double[] src, Double[] dest) {
+    static void addElems(int startingIndex, Double[] src, Double[] dest) {
         for (int i = 0; i < src.length; i++) {
             if (i + startingIndex < dest.length) {
 //                System.out.println( (i+startingIndex) + " " + src[i]);
                 dest[i + startingIndex] += src[i];
             }
         }
-    }
-
-    protected double computeStrangeSincFunction(double k) {
-        double up = 0.0, down = 0.0;
-        double PI = Math.PI;
-        double x = k - ((L - 1) / 2.0);
-        up = Math.sin(((2.0 * PI * fc) / (SAMPLING_FREQUENCY)) * x);
-        down = PI * x;
-        return up / down;
-    }
-
-    protected double computeStrangeSincFunction(double k, double fc) {
-        double up = 0.0, down = 0.0;
-        double PI = Math.PI;
-        double x = k - ((L - 1) / 2.0);
-        up = Math.sin(((2.0 * PI * fc) / (SAMPLING_FREQUENCY)) * x);
-        down = PI * x;
-        return up / down;
     }
 }

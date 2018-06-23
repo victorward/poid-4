@@ -2,11 +2,17 @@ package gui;
 
 import operations.WindowType;
 import operations.equalizer.Equalizer;
-import operations.filter.*;
+import operations.filter.SOIFilter;
+import operations.filter.SOIFilterConvolution;
+import operations.filter.SOIFilterEqualizer;
+import operations.filter.SOIFilterSpectrum;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import utils.SamplesToWave;
+import utils.Audio;
+import utils.AudioFileHelper;
+import utils.AudioGenerator;
 import utils.WaveToSamplesConverter;
 import utils.chart.ChartDrawer;
 
@@ -17,6 +23,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,11 +33,12 @@ public class GUI extends javax.swing.JFrame {
     private WindowType typeOfWindow = WindowType.VON_HANN;
     private SOIFilter filter = new SOIFilterSpectrum();
     private Equalizer eq = new Equalizer();
-    private Integer[] samples;
+    private double[] samples;
     private AudioFormat af;
-    private SOIWahWah filterWahWah = new SOIWahWah();
     private String filename;
     public static final String defaultImagesPath = "src/main/resources/sounds";
+    private AudioFileHelper helper = new AudioFileHelper();
+    private Audio audio;
 
     /**
      * Creates new form GUI
@@ -131,7 +140,8 @@ public class GUI extends javax.swing.JFrame {
 
         jLabel2.setText("M:");
 
-        MjTextField.setText("1024");
+//        MjTextField.setText("1024");
+        MjTextField.setText("2048");
 
         jLabel3.setText("R:");
 
@@ -139,11 +149,13 @@ public class GUI extends javax.swing.JFrame {
 
         jLabel4.setText("L:");
 
-        LjTextField.setText("1024");
+//        LjTextField.setText("1024");
+        LjTextField.setText("251");
 
         jLabel5.setText("Fc:");
 
-        FcJTextField.setText("500");
+//        FcJTextField.setText("500");
+        FcJTextField.setText("1000");
 
         SquareJRadioButton.setText("Square");
         SquareJRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -334,13 +346,13 @@ public class GUI extends javax.swing.JFrame {
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(frequencyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                         .addGroup(layout.createSequentialGroup()
-                                                .addGap(15, 15, 15)
-                                                .addComponent(filterSpectrumJRadioButton)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(filterConvolutionJRadioButton)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(filterEqualizerJRadioButton)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addGap(15, 15, 15)
+                                                        .addComponent(filterSpectrumJRadioButton)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(filterConvolutionJRadioButton)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(filterEqualizerJRadioButton)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 //                                                .addComponent(wahWahJRadioButton)
                                         )
                                         .addGroup(layout.createSequentialGroup()
@@ -373,9 +385,9 @@ public class GUI extends javax.swing.JFrame {
                                                 .addComponent(fileOpenJButton)
                                                 .addGap(18, 18, 18)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(filterSpectrumJRadioButton)
-                                                        .addComponent(filterConvolutionJRadioButton)
-                                                        .addComponent(filterEqualizerJRadioButton)
+                                                                .addComponent(filterSpectrumJRadioButton)
+                                                                .addComponent(filterConvolutionJRadioButton)
+                                                                .addComponent(filterEqualizerJRadioButton)
 //                                                        .addComponent(wahWahJRadioButton)
                                                 )
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -439,7 +451,9 @@ public class GUI extends javax.swing.JFrame {
 
         this.f = new File(readSoundFile());
         try {
-            this.samples = WaveToSamplesConverter.convertWaveToIntSamples(this.f);
+            this.audio = helper.readFile(this.f);
+
+            this.samples = audio.channels[0].samples;
             this.af = WaveToSamplesConverter.getAudioFormat(this.f);
             updateChartStartSignal();
             if (this.wahWahJRadioButton.isSelected()) {
@@ -457,17 +471,6 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_fileOpenJButtonActionPerformed
 
     private void setAndComputeForWahWah() {
-        this.filterWahWah.setAmplify(Integer.parseInt(this.amplifyJTextField.getText()));
-        this.filterWahWah.setFrequency(Integer.parseInt(this.frequencyJTextField.getText()));
-        this.filterWahWah.setLeftSideFreq(Integer.parseInt(this.LeftSideFreqJTextField.getText()));
-        this.filterWahWah.setRightSideFreq(Integer.parseInt(this.RighttSideFreqJTextField.getText()));
-        this.filterWahWah.setWidth(Integer.parseInt(this.widhtJTextField.getText()));
-        this.filterWahWah.setM(Integer.parseInt(this.MjTextField.getText()));
-        this.filterWahWah.setN(Integer.parseInt(this.NjTextField.getText()));
-        this.filterWahWah.setR(Integer.parseInt(this.RjTextField.getText()));
-        this.filterWahWah.setSignalWindows(samples);
-        filterWahWah.computeFilter();
-        //ChartDrawer.drawChart(filterWahWah.getOutputSignal(), "Wah Wah Muachachacha");
     }
 
 
@@ -502,12 +505,6 @@ public class GUI extends javax.swing.JFrame {
 
 
     private void updateChartOutputSignalForWahWah() {
-        JFreeChart chart = ChartDrawer.drawChart(this.filterWahWah.getOutputSignal(), "WahWah");
-        ChartPanel cp = new ChartPanel(chart);
-        this.signalOutputChartJPanel.removeAll();
-        this.signalOutputChartJPanel.setLayout(new java.awt.BorderLayout());
-        this.signalOutputChartJPanel.add(cp, BorderLayout.CENTER);
-        this.signalOutputChartJPanel.validate();
     }
 
 
@@ -579,23 +576,28 @@ public class GUI extends javax.swing.JFrame {
 //        fc.setCurrentDirectory(new File("src/main/resources/results"));
 //        fc.showSaveDialog(this);
 //        String path = fc.getSelectedFile().getAbsolutePath();
-        String path = "src/main/resources/results/transformed_" + this.filename + ".wav";
-        SamplesToWave saver;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH.mm.ss");
+        LocalDateTime now = LocalDateTime.now();
+        String path = "src/main/resources/results/" + dtf.format(now) + "_transformed_" + this.filename + ".wav";
+        int samplingRate = Math.toIntExact(audio.sampleRate);
+        Audio audio = new AudioGenerator().createAudio(ArrayUtils.toPrimitive(this.filter.getOutputSignal()), samplingRate);
+        helper.saveFile(audio, new File(path));
 
-        if (this.wahWahJRadioButton.isSelected()) {
-            saver = new SamplesToWave(44100, this.filterWahWah.getOutputSignal(), this.af);
 
-        } else {
-            saver = new SamplesToWave(SOIFilter.SAMPLING_FREQUENCY, this.filter.getOutputSignal(), this.af);
-        }
+//        SamplesToWave saver;
+//        if (this.wahWahJRadioButton.isSelected()) {
+//            saver = new SamplesToWave(44100, this.filterWahWah.getOutputSignal(), this.af);
+//
+//        } else {
+//            saver = new SamplesToWave(SOIFilter.SAMPLING_FREQUENCY, this.filter.getOutputSignal(), this.af);
+//        }
 
-        try {
-            saver.saveWave(path);
-        } catch (IOException ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("Zapisane");
-
+//        try {
+//            saver.saveWave(path);
+//        } catch (IOException ex) {
+//            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        System.out.println("Zapisane");
     }//GEN-LAST:event_saveJButtonActionPerformed
 
     private void NjTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NjTextFieldActionPerformed
@@ -623,8 +625,8 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void updateChartStartSignal() {
-
-        JFreeChart chart = ChartDrawer.drawChart(this.samples, "start signal");
+        Double[] data = ArrayUtils.toObject(this.samples);
+        JFreeChart chart = ChartDrawer.drawChart(data, "start signal");
         ChartPanel cp = new ChartPanel(chart);
         this.signalStartChartJPanel.removeAll();
         this.signalStartChartJPanel.setLayout(new java.awt.BorderLayout());
